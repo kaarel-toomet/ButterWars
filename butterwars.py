@@ -4,6 +4,8 @@ import random as r
 pg.init()
 pic = pg.image.load("mrbutter1.png")
 pics = pg.image.load("mrbutter1stab.png")
+picf = pg.image.load("mrbutter1flip.png")
+picsf = pg.image.load("mrbutter1stabflip.png")
 gstkm = pg.image.load("greenstickman.png")
 screen = pg.display.set_mode((0,0), pg.RESIZABLE)
 screenw = screen.get_width()
@@ -28,6 +30,10 @@ pause = False
 gameover = False
 player = pg.sprite.Group()
 gstickmen = pg.sprite.Group()
+atk = False
+fc = 0
+attick = 0
+attimer = False
 class Player(pg.sprite.Sprite):
     def __init__(self,x,y):
         pg.sprite.Sprite.__init__(self)
@@ -36,6 +42,15 @@ class Player(pg.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
     def update(self, mup, mdown, mleft, mright):
+        global fc, atk
+        if fc == 0 and atk == False:
+            self.image = pic
+        if fc == 1 and atk == False:
+            self.image = picf
+        if fc == 0 and atk == True:
+            self.image = pics
+        if fc == 1 and atk == True:
+            self.image = picsf
         if self.rect.y <= 0:
             up = False
         else:
@@ -60,7 +75,7 @@ class Player(pg.sprite.Sprite):
             self.rect.x -= dist
         if mright and right:
             self.rect.x += dist
-class Thing(pg.sprite.Sprite):
+class Gstick(pg.sprite.Sprite):
     def __init__(self, x, y, img):
         pg.sprite.Sprite.__init__(self)
         self.image = img
@@ -69,6 +84,7 @@ class Thing(pg.sprite.Sprite):
         self.y = float(y)
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
+        self.hp = 5
     def update(self):
         self.x += 0
 
@@ -81,10 +97,10 @@ def reset():
     points = 0
     hp = 5
     gstickmen.empty()
-    gstickmen.add(Thing(r.uniform(10,screenw-96),screenh, ghost))
+    gstickmen.add(Gstick(r.uniform(10,screenw-96),screenh-96, gstkm))
 mb = Player(screenw/2,screenh-128)
 player.add(mb)
-gstickmen.add(Thing(r.uniform(10,screenw-90),screenh-96,gstkm))
+gstickmen.add(Gstick(r.uniform(10,screenw-90),screenh-96,gstkm))
 
 while do:
     for event in pg.event.get():
@@ -93,12 +109,18 @@ while do:
         elif event.type == pg.KEYDOWN:
             if event.key == pg.K_LEFT:
                 mleft = True
+                fc = 0
             elif event.key == pg.K_RIGHT:
                 mright = True
+                fc = 1
             elif event.key == pg.K_p:
                 pause = True
             elif event.key == pg.K_r:
                 reset()
+            elif event.key == pg.K_SPACE:
+                atk = True
+                attimer = True
+                attick = 5
         elif event.type == pg.MOUSEBUTTONDOWN:
             gofast = True
         elif event.type == pg.MOUSEBUTTONUP:
@@ -154,6 +176,10 @@ while do:
         screen.blit(dtext,dtext_rect)
         screen.blit(text,text_rect)
         pg.display.update()
+    acol = pg.sprite.spritecollide(mb,gstickmen,False)
+    if len(acol) > 0 and atk == True:
+        points += 1
+        gstickmen.remove(acol)
     screen.fill((64,128,255))
     status = ("Score: " + str(points) + " Health: " + str(hp))
     text = font.render(status, True, (255,255,255))
@@ -165,6 +191,11 @@ while do:
     player.draw(screen)
     gstickmen.update()
     gstickmen.draw(screen)
+    if attimer:
+        attick -= 1
+    if attick == 0:
+        attimer = False
+        atk = False
     pg.display.update()
     if not gofast:
         timer.tick(60)
