@@ -7,6 +7,7 @@ pics = pg.image.load("mrbutter1stab.png")
 picf = pg.image.load("mrbutter1flip.png")
 picsf = pg.image.load("mrbutter1stabflip.png")
 gstkm = pg.image.load("greenstickman.png")
+gstkmp = pg.image.load("greenstickmanpunch.png")
 screen = pg.display.set_mode((0,0), pg.RESIZABLE)
 screenw = screen.get_width()
 screenh = screen.get_height()
@@ -87,8 +88,21 @@ class Gstick(pg.sprite.Sprite):
         self.rect.x = int(self.x)
         self.rect.y = int(self.y)
         self.hp = 5
+        self.ptick = r.randint(0, 60)
+        self.punch = False
+        self.pl = 0
     def update(self):
         self.x += 0
+        if self.pl <= 0:
+            self.ptick += 1
+            self.image = gstkm
+        else:
+            self.pl -= 1
+        if self.ptick >= 60:
+            self.punch = True
+            self.image = gstkmp
+            self.ptick = 0
+            self.pl += 5
 
 def reset():
     global points, hp, atick, gtick, atimer, gtimer, otick,\
