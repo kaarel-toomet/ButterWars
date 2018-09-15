@@ -35,6 +35,7 @@ fc = 0
 attick = 0
 attimer = False
 gsugly = 0
+ac = 0
 class Player(pg.sprite.Sprite):
     def __init__(self,x,y):
         pg.sprite.Sprite.__init__(self)
@@ -116,10 +117,11 @@ while do:
                 pause = True
             elif event.key == pg.K_r:
                 reset()
-            elif event.key == pg.K_SPACE:
+            elif event.key == pg.K_SPACE and ac == 0:
                 atk = True
                 attimer = True
                 attick = 5
+                ac += 60
         elif event.type == pg.MOUSEBUTTONDOWN:
             gofast = True
         elif event.type == pg.MOUSEBUTTONUP:
@@ -182,6 +184,8 @@ while do:
 
     if r.uniform(0, 1) < 1/300:
         gstickmen.add(Gstick(r.uniform(10,screenw-90),screenh-96,gstkm))
+    if ac > 0:
+        ac -= 1
     screen.fill((64,128,255))
     status = ("Score: " + str(points) + " Health: " + str(hp))
     text = font.render(status, True, (255,255,255))
