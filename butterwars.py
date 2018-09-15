@@ -103,9 +103,8 @@ class Gstick(pg.sprite.Sprite):
             self.pl += 5
 
 def reset():
-    global points, hp, gstickmen, mb
+    global points, hp, gstickmen, mb, gameover
     gameover = False
-    screen.fill((0, 0, 0))
     points = 0
     hp = 3
     gstickmen.empty()
@@ -155,6 +154,8 @@ while do:
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_p:
                     pause = False
+                if event.key == pg.K_r:
+                    reset()
         pd = "PAUSED"
         ptext = dfont.render(pd, True, (127,127,127))
         ptext_rect = ptext.get_rect()
@@ -192,7 +193,6 @@ while do:
     acol = pg.sprite.spritecollide(mb,gstickmen,False)
     for a in acol:
         if a.punch:
-            global hp
             hp -= 1
     if len(acol) > 0 and atk == True:
         points += 1
