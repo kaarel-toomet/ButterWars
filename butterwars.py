@@ -20,10 +20,8 @@ mleft = False
 mright = False
 gofast = False
 timer = pg.time.Clock()
-gstick = 0
-gsmax = 120
 points = 0
-hp = 5
+hp = 3
 font = pg.font.SysFont("Times", 24)
 dfont = pg.font.SysFont("Times", 32)
 pfont = pg.font.SysFont("Times", 50)
@@ -35,7 +33,6 @@ atk = False
 fc = 0
 attick = 0
 attimer = False
-gsugly = 0
 ac = 0
 class Player(pg.sprite.Sprite):
     def __init__(self,x,y):
@@ -93,6 +90,7 @@ class Gstick(pg.sprite.Sprite):
         self.pl = 0
     def update(self):
         self.x += 0
+        self.punch = False
         if self.pl <= 0:
             self.ptick += 1
             self.image = gstkm
@@ -105,15 +103,15 @@ class Gstick(pg.sprite.Sprite):
             self.pl += 5
 
 def reset():
-    global points, hp, atick, gtick, atimer, gtimer, otick,\
-           omax, slowtick, sbtick, sbmax, imtick, gameover, speed,\
-           speedf
+    global points, hp, gstickmen, mb
     gameover = False
     screen.fill((0, 0, 0))
     points = 0
-    hp = 5
+    hp = 3
     gstickmen.empty()
-    gstickmen.add(Gstick(r.uniform(10,screenw-96),screenh-96, gstkm))
+    player.empty()
+    mb = Player(screenw/2,screenh-128)
+    player.add(mb)
 mb = Player(screenw/2,screenh-128)
 player.add(mb)
 while do:
@@ -192,6 +190,10 @@ while do:
         screen.blit(text,text_rect)
         pg.display.update()
     acol = pg.sprite.spritecollide(mb,gstickmen,False)
+    for a in acol:
+        if a.punch:
+            global hp
+            hp -= 1
     if len(acol) > 0 and atk == True:
         points += 1
         gstickmen.remove(acol)
