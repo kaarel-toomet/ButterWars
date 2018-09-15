@@ -34,6 +34,7 @@ atk = False
 fc = 0
 attick = 0
 attimer = False
+gsugly = 0
 class Player(pg.sprite.Sprite):
     def __init__(self,x,y):
         pg.sprite.Sprite.__init__(self)
@@ -100,8 +101,6 @@ def reset():
     gstickmen.add(Gstick(r.uniform(10,screenw-96),screenh-96, gstkm))
 mb = Player(screenw/2,screenh-128)
 player.add(mb)
-gstickmen.add(Gstick(r.uniform(10,screenw-90),screenh-96,gstkm))
-
 while do:
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -180,6 +179,9 @@ while do:
     if len(acol) > 0 and atk == True:
         points += 1
         gstickmen.remove(acol)
+
+    if r.uniform(0, 1) < 1/300:
+        gstickmen.add(Gstick(r.uniform(10,screenw-90),screenh-96,gstkm))
     screen.fill((64,128,255))
     status = ("Score: " + str(points) + " Health: " + str(hp))
     text = font.render(status, True, (255,255,255))
